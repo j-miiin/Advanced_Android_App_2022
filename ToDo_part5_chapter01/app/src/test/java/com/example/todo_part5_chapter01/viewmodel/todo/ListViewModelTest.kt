@@ -3,8 +3,10 @@ package com.example.todo_part5_chapter01.viewmodel.todo
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.todo_part5_chapter01.ViewModelTest
 import com.example.todo_part5_chapter01.data.entity.ToDoEntity
+import com.example.todo_part5_chapter01.domain.todo.GetToDoItemUseCase
 import com.example.todo_part5_chapter01.domain.todo.InsertToDoListUseCase
 import com.example.todo_part5_chapter01.presentation.list.ListViewModel
+import com.example.todo_part5_chapter01.presentation.list.ToDoListState
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
@@ -23,6 +25,8 @@ internal class ListViewModelTest: ViewModelTest() {
     private val viewModel: ListViewModel by inject()
 
     private val insertToDoListUseCase: InsertToDoListUseCase by inject()
+
+    private val getToDoItemUseCase: GetToDoItemUseCase by inject()
 
     private val mockList = (0 until 10).map {
         ToDoEntity(
@@ -57,7 +61,36 @@ internal class ListViewModelTest: ViewModelTest() {
         viewModel.fetchData()
         testObservable.assertValueSequence(
             listOf(
-                mockList
+                ToDoListState.UnInitialized,
+                ToDoListState.Loading,
+                ToDoListState.Success(mockList)
+            )
+        )
+    }
+
+    // Test : 데이터 업데이트가 잘 반영되는가
+    @Test
+    fun `test Item Update`(): Unit = runBlockingTest {
+        val todo = ToDoEntity(
+            id = 1,
+            title = "title 1",
+            description = "description 1",
+            hasCompleted = true
+        )
+        viewModel.updateEntity(todo)
+        assert(getToDoItemUseCase(todo.id)?.hasCompleted ?: false == todo.hasCompleted)
+    }
+
+    // Test : 데이터를 모두 삭제했을 때 잘 반영되는가
+    @Test
+    fun `test Item Delete All`(): Unit = runBlockingTest {
+        val testObservable = viewModel.toDoListLiveData.test()
+        viewModel.deleteAll()
+        testObservable.assertValueSequence(
+            listOf(
+                ToDoListState.UnInitialized,
+                ToDoListState.Loading,
+                ToDoListState.Success(listOf())
             )
         )
     }
