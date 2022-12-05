@@ -3,8 +3,10 @@ package com.example.todo_part5_chapter01.presentation.detail
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.todo_part5_chapter01.data.entity.ToDoEntity
 import com.example.todo_part5_chapter01.domain.todo.DeleteToDoItemUseCase
 import com.example.todo_part5_chapter01.domain.todo.GetToDoItemUseCase
+import com.example.todo_part5_chapter01.domain.todo.InsertToDoItemUseCase
 import com.example.todo_part5_chapter01.domain.todo.UpdateToDoUseCase
 import com.example.todo_part5_chapter01.presentation.BaseViewModel
 import kotlinx.coroutines.Job
@@ -15,7 +17,8 @@ internal class DetailViewModel(
     var id: Long = -1,
     private val getToDoItemUseCase: GetToDoItemUseCase,
     private val deleteToDoItemUseCase: DeleteToDoItemUseCase,
-    private val updateToDoUseCase: UpdateToDoUseCase
+    private val updateToDoUseCase: UpdateToDoUseCase,
+    private val insertToDoItemUseCase: InsertToDoItemUseCase
 ): BaseViewModel() {
 
     private var _toDoDetailLiveData = MutableLiveData<ToDoDetailState>(ToDoDetailState.Uninitialized)
@@ -24,11 +27,11 @@ internal class DetailViewModel(
     override fun fetchData(): Job = viewModelScope.launch {
         when (detailMode) {
             DetailMode.WRITE -> {
-                // TODO 작성모드로 상세화면 진입 로직 처리
+                _toDoDetailLiveData.postValue(ToDoDetailState.Write)
             }
             DetailMode.DETAIL -> {
-                _toDoDetailLiveData.postValue(ToDoDetailState.Loading)
                 try {
+                    _toDoDetailLiveData.postValue(ToDoDetailState.Loading)
                     getToDoItemUseCase(id)?.let {
                         _toDoDetailLiveData.postValue(ToDoDetailState.Success(it))
                     } ?: kotlin.run {
@@ -60,7 +63,18 @@ internal class DetailViewModel(
         _toDoDetailLiveData.postValue(ToDoDetailState.Loading)
         when (detailMode) {
             DetailMode.WRITE -> {
-                // TODO 작성모드로 작성 처리
+                try {
+                    val todoEntity = ToDoEntity(
+                        title = title,
+                        description = description
+                    )
+                    id = insertToDoItemUseCase(todoEntity)
+                    _toDoDetailLiveData.postValue(ToDoDetailState.Success(todoEntity))
+                    detailMode = DetailMode.DETAIL
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    _toDoDetailLiveData.postValue(ToDoDetailState.Error)
+                }
             }
             DetailMode.DETAIL -> {
                 try {
