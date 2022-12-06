@@ -1,6 +1,8 @@
 package com.example.todo_part5_chapter01.presentation.list
 
 import android.os.Bundle
+import android.widget.Toast
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todo_part5_chapter01.databinding.ActivityListBinding
 import com.example.todo_part5_chapter01.presentation.BaseActivity
@@ -29,7 +31,7 @@ internal class ListActivity : BaseActivity<ListViewModel>(), CoroutineScope {
         setContentView(binding.root)
     }
 
-    private fun initViews() = with(binding) {
+    private fun initViews(binding: ActivityListBinding) = with(binding) {
         recyclerView.layoutManager = LinearLayoutManager(this@ListActivity, LinearLayoutManager.VERTICAL, false)
         recyclerView.adapter = adapter
 
@@ -38,10 +40,10 @@ internal class ListActivity : BaseActivity<ListViewModel>(), CoroutineScope {
         }
 
         addToDoButton.setOnClickListener {
-            startActivityForResult(
-                DetailActivity.getIntent(this@ListActivity, DetailMode.WRITE),
-                DetailActivity.FETCH_REQUEST_CODE
-            )
+//            startActivityForResult(
+//                DetailActivity.getIntent(this@ListActivity, DetailMode.WRITE),
+//                DetailActivity.FETCH_REQUEST_CODE
+//            )
         }
     }
 
@@ -55,14 +57,44 @@ internal class ListActivity : BaseActivity<ListViewModel>(), CoroutineScope {
                     handleLoadingState()
                 }
                 is ToDoListState.Success -> {
-                    handleSuccessState()
+                    handleSuccessState(it)
                 }
                 is ToDoListState.Error -> {
-                    handleError()
+                    handleErrorState()
                 }
             }
         }
     }
 
+    private fun handleLoadingState() = with(binding) {
+        refreshLayout.isRefreshing = true
+    }
 
+    private fun handleSuccessState(state: ToDoListState.Success) = with(binding) {
+        refreshLayout.isEnabled = state.toDoList.isNotEmpty()
+        refreshLayout.isRefreshing = false
+
+        if (state.toDoList.isEmpty()) {
+            emptyResultTextView.isGone = false
+            recyclerView.isGone = true
+        } else {
+            emptyResultTextView.isGone = true
+            recyclerView.isGone = false
+            adapter.setToDoList(
+                state.toDoList,
+                toDoCheckListener = {
+//                    startActivityForResult(
+//                        DetailActivity.getIntent(this@ListActivity, it.id, DetailMode.DETAIL),
+//                        DetailActivity.FETCH_REQUEST_CODE
+//                    )
+                }, toDoItemClickListener = {
+                    viewModel.updateEntity(it)
+                }
+            )
+        }
+    }
+
+    private fun handleErrorState() {
+        Toast.makeText(this, "문제가 발생했습니다.", Toast.LENGTH_SHORT).show()
+    }
 }
