@@ -19,11 +19,11 @@ interface ToDoDao {
     suspend fun insert(toDoEntityList: List<ToDoEntity>)
 
     @Query("DELETE FROM ToDoEntity WHERE id=:id")
-    suspend fun delete(id: Long): Boolean
+    suspend fun delete(id: Long)
 
     @Query("DELETE FROM ToDoEntity")
     suspend fun deleteAll()
 
     @Update
-    suspend fun update(toDoEntity: ToDoEntity): Boolean
+    suspend fun update(toDoEntity: ToDoEntity)
 }
