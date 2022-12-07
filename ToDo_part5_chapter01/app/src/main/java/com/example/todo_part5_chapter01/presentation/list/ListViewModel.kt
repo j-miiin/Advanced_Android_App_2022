@@ -21,9 +21,9 @@ import kotlinx.coroutines.launch
 internal class ListViewModel(
     private val getToDoListUseCase: GetToDoListUseCase,
     private val updateToDoUseCase: UpdateToDoUseCase,
-    private val deleteAllToDoItemUseCase: DeleteAllToDoItemUseCase,
-    private val insertToDoListUseCase: InsertToDoListUseCase
+    private val deleteAllToDoItemUseCase: DeleteAllToDoItemUseCase
 ): BaseViewModel() {
+
     private var _toDoListLiveData = MutableLiveData<ToDoListState>(ToDoListState.UnInitialized)
     val toDoListLiveData: LiveData<ToDoListState> = _toDoListLiveData
 
