@@ -1,7 +1,13 @@
 package com.example.shopping_app_part5_chapter02.presentation.list
 
+import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isGone
 import com.example.shopping_app_part5_chapter02.databinding.FragmentProductListBinding
+import com.example.shopping_app_part5_chapter02.extensions.toast
 import com.example.shopping_app_part5_chapter02.presentation.BaseFragment
+import com.example.shopping_app_part5_chapter02.presentation.adapter.ProductListAdapter
 import org.koin.android.ext.android.inject
 
 internal class ProductListFragment: BaseFragment<ProductListViewModel, FragmentProductListBinding>() {
@@ -13,6 +19,13 @@ internal class ProductListFragment: BaseFragment<ProductListViewModel, FragmentP
     override val viewModel: ProductListViewModel by inject<ProductListViewModel>()
 
     override fun getViewBinding(): FragmentProductListBinding = FragmentProductListBinding.inflate(layoutInflater)
+
+    private val adapter = ProductListAdapter()
+
+    private val startProductDetailForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            // TODO 성공적으로 처리 완료 이후 동작
+       }
 
     override fun observeData() = viewModel.productListStateLiveData.observe(this) {
 
@@ -33,5 +46,40 @@ internal class ProductListFragment: BaseFragment<ProductListViewModel, FragmentP
                 handleErrorState()
             }
         }
+    }
+
+    private fun initViews(binding: FragmentProductListBinding) = with(binding) {
+        recyclerView.adapter = adapter
+
+        refreshLayout.setOnRefreshListener {
+            viewModel.fetchData()
+        }
+    }
+
+    private fun handleLoadingState() = with(binding) {
+        refreshLayout.isRefreshing = true
+    }
+
+    private fun handleSuccessState(state: ProductListState.Success) = with(binding) {
+        refreshLayout.isEnabled = state.productList.isNotEmpty()
+        refreshLayout.isRefreshing = false
+
+        if (state.productList.isEmpty()) {
+            emptyResultTextView.isGone = false
+            recyclerView.isGone = true
+        } else {
+            emptyResultTextView.isGone = true
+            recyclerView.isGone = false
+            adapter.setProductList(state.productList) {
+//                startProductDetailForResult.launch(
+//                    ProductDetailActivity.newIntent(requireContext(), it.id)
+//                )
+                requireContext().toast("Product Entity : $it")
+            }
+        }
+    }
+
+    private fun handleErrorState() {
+        Toast.makeText(requireContext(), "문제가 발생했습니다.", Toast.LENGTH_SHORT).show()
     }
 }
