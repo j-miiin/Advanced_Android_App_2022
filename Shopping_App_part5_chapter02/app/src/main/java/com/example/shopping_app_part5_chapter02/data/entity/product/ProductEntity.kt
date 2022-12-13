@@ -1,9 +1,12 @@
 package com.example.shopping_app_part5_chapter02.data.entity.product
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.Date
 
+@Entity
 data class ProductEntity(
-    val id: Long,
+    @PrimaryKey val id: Long,
     val createdAt: Date,
     val productName: String,
     val productPrice: Int,

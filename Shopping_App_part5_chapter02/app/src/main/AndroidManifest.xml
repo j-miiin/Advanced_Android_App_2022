@@ -16,8 +16,9 @@
         android:theme="@style/Theme.Shopping_App_part5_chapter02"
         tools:targetApi="31">
         <activity
-            android:name=".ProductDetailActivity"
-            android:exported="false">
+            android:name=".presentation.detail.ProductDetailActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.PopupOverlay">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

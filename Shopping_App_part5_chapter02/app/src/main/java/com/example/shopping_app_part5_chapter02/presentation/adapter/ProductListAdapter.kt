@@ -25,7 +25,9 @@ class ProductListAdapter: RecyclerView.Adapter<ProductListAdapter.ProductItemVie
         }
 
         fun bindViews(data: ProductEntity) {
-
+            binding.root.setOnClickListener {
+                productItemClickListener(data)
+            }
         }
     }
 
