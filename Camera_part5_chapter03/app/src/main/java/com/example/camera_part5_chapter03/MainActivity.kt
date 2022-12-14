@@ -5,20 +5,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.display.DisplayManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.camera.core.AspectRatio
-import androidx.camera.core.Camera
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
+import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY
-import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.camera_part5_chapter03.databinding.ActivityMainBinding
+import com.example.camera_part5_chapter03.util.PathUtil
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -41,6 +42,8 @@ class MainActivity : AppCompatActivity() {
     private var displayId: Int = -1
 
     private var camera: Camera? = null
+
+    private var isCapturing: Boolean = false
 
     private val displayListener = object : DisplayManager.DisplayListener {
         override fun onDisplayAdded(p0: Int) = Unit
@@ -109,10 +112,58 @@ class MainActivity : AppCompatActivity() {
                     this@MainActivity, cameraSelector, preview, imageCapture
                 )
                 preview.setSurfaceProvider(viewFinder.surfaceProvider)
+                bindCameraUseCase()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }, cameraMainExecutor)
+    }
+
+    private fun bindCaptureListener() = with(binding) {
+        captureButton.setOnClickListener {
+            if (isCapturing.not()) {
+                isCapturing = true
+                captureCamera()
+            }
+        }
+    }
+
+    private fun updateSavedImageContent() {
+        contentUri?.let {
+            isCapturing = try {
+                val file = File()
+                false
+            } catch (e: Exception) {
+                 false
+            }
+        }
+    }
+
+    private var contentUri: Uri? = null
+
+    private fun captureCamera() {
+        if (::imageCapture.isInitialized.not()) return
+        val photoFile = File(
+            PathUtil.getOutputDirectory(this),
+            SimpleDateFormat(
+                FILENAME_FORMAT, Locale.KOREA
+            ).format(System.currentTimeMillis()) + ".jpg"
+        )
+
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+        imageCapture.takePicture(outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
+            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                val savedUri = outputFileResults.savedUri ?: Uri.fromFile(photoFile)
+                contentUri = savedUri
+
+            }
+
+            override fun onError(e: ImageCaptureException) {
+                e.printStackTrace()
+                isCapturing = false
+            }
+
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -131,5 +182,6 @@ class MainActivity : AppCompatActivity() {
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private val LENS_FACING: Int = CameraSelector.LENS_FACING_BACK
+        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
 }
