@@ -17,7 +17,7 @@ sealed class ProfileState {
 
         data class Registered(
             val userName: String,
-            val profileImageUrl: Uri?,
+            val profileImageUri: Uri?,
             val productList: List<ProductEntity> = listOf()
         ): Success()
 

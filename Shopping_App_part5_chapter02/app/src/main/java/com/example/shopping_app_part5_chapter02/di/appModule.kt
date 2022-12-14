@@ -9,6 +9,8 @@ import com.example.shopping_app_part5_chapter02.data.network.provideProductRetro
 import com.example.shopping_app_part5_chapter02.data.preference.PreferenceManager
 import com.example.shopping_app_part5_chapter02.data.repository.DefaultProductRepository
 import com.example.shopping_app_part5_chapter02.data.repository.ProductRepository
+import com.example.shopping_app_part5_chapter02.domain.*
+import com.example.shopping_app_part5_chapter02.domain.GetOrderedProductListUseCase
 import com.example.shopping_app_part5_chapter02.domain.GetProductItemUseCase
 import com.example.shopping_app_part5_chapter02.domain.GetProductListUseCase
 import com.example.shopping_app_part5_chapter02.domain.OrderProductItemUseCase
@@ -27,7 +29,7 @@ val appModule = module {
     // ViewModel
     viewModel { MainViewModel() }
     viewModel { ProductListViewModel(get()) }
-    viewModel { ProfileViewModel(get()) }
+    viewModel { ProfileViewModel(get(), get(), get()) }
     viewModel { (productId: Long) -> ProductDetailViewModel(productId, get(), get()) }
 
     // Coroutine Dispatcher
@@ -38,6 +40,8 @@ val appModule = module {
     factory { GetProductItemUseCase(get()) }
     factory { GetProductListUseCase(get()) }
     factory { OrderProductItemUseCase(get()) }
+    factory { GetOrderedProductListUseCase(get()) }
+    factory { DeleteOrderedProductListUseCase(get()) }
 
     // Repository
     single<ProductRepository> { DefaultProductRepository(get(), get(), get()) }

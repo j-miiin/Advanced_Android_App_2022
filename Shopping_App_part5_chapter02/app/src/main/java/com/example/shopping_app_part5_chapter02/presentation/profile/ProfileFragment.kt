@@ -7,11 +7,16 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.example.shopping_app_part5_chapter02.R
 import com.example.shopping_app_part5_chapter02.databinding.FragmentProfileBinding
+import com.example.shopping_app_part5_chapter02.extensions.loadCenterCrop
+import com.example.shopping_app_part5_chapter02.extensions.toast
 import com.example.shopping_app_part5_chapter02.presentation.BaseFragment
+import com.example.shopping_app_part5_chapter02.presentation.adapter.ProductListAdapter
+import com.example.shopping_app_part5_chapter02.presentation.detail.ProductDetailActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import org.koin.android.ext.android.inject
 
 internal class ProfileFragment: BaseFragment<ProfileViewModel, FragmentProfileBinding>() {
@@ -41,6 +46,7 @@ internal class ProfileFragment: BaseFragment<ProfileViewModel, FragmentProfileBi
             try {
                 task.getResult(ApiException::class.java)?.let { account ->
                     Log.e(TAG, "firebaseAuthWithGoogle: ${account.id}")
+                    viewModel.saveToken(account.idToken ?: throw Exception())
                 } ?: throw Exception()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -48,22 +54,25 @@ internal class ProfileFragment: BaseFragment<ProfileViewModel, FragmentProfileBi
         }
     }
 
+    private val adapter = ProductListAdapter()
+
     override fun observeData() = viewModel.profileStateLiveData.observe(this) {
         when (it) {
             is ProfileState.UnInitialized -> initViews()
             is ProfileState.Loading -> handleLoadingState()
-            is ProfileState.Login -> TODO()
+            is ProfileState.Login -> handleLoginState(it)
             is ProfileState.Success -> handleSuccessState(it)
-            is ProfileState.Error -> TODO()
+            is ProfileState.Error -> handleErrorState()
         }
     }
 
     private fun initViews() = with(binding) {
+        recyclerView.adapter = adapter
         loginButton.setOnClickListener {
             signInGoogle()
         }
         logoutButton.setOnClickListener {
-
+            viewModel.signOut()
         }
     }
 
@@ -81,12 +90,50 @@ internal class ProfileFragment: BaseFragment<ProfileViewModel, FragmentProfileBi
         progressBar.isGone = true
         when (state) {
             is ProfileState.Success.Registered -> {
-//                handleRegisteredState(state)
+                handleRegisteredState(state)
             }
             is ProfileState.Success.NotRegistered -> {
                 profileGroup.isGone = true
                 loginRequiredGroup.isVisible = true
             }
         }
+    }
+
+    private fun handleRegisteredState(state: ProfileState.Success.Registered) = with(binding) {
+        profileGroup.isVisible = true
+        loginRequiredGroup.isGone = true
+        profileImageView.loadCenterCrop(state.profileImageUri.toString(), 60f)
+        userNameTextView.text = state.userName
+
+        if (state.productList.isEmpty()) {
+            emptyResultTextView.isGone = false
+            recyclerView.isGone = true
+        } else {
+            emptyResultTextView.isGone = true
+            recyclerView.isGone = false
+            adapter.setProductList(state.productList) {
+                startActivity(
+                    ProductDetailActivity.newIntent(requireContext(), it.id)
+                )
+            }
+        }
+    }
+
+    private fun handleLoginState(state: ProfileState.Login) = with(binding) {
+        binding.progressBar.isVisible = true
+        val credential = GoogleAuthProvider.getCredential(state.idToken, null)
+        firebaseAuth.signInWithCredential(credential)
+            .addOnCompleteListener(requireActivity()) { task ->
+                if (task.isSuccessful) {
+                    val user = firebaseAuth.currentUser
+                    viewModel.setUserInfo(user)
+                } else {
+                    viewModel.setUserInfo(null)
+                }
+            }
+    }
+
+    private fun handleErrorState() {
+        requireContext().toast("에러가 발생했습니다.")
     }
 }
