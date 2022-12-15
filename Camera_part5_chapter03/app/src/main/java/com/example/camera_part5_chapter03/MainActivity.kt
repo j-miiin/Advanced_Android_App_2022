@@ -5,19 +5,26 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.display.DisplayManager
+import android.media.MediaScannerConnection
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY
+import androidx.camera.core.impl.ImageOutputConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.camera_part5_chapter03.databinding.ActivityMainBinding
+import com.example.camera_part5_chapter03.extensions.loadCenterCrop
 import com.example.camera_part5_chapter03.util.PathUtil
 import java.io.File
+import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -43,6 +50,8 @@ class MainActivity : AppCompatActivity() {
 
     private var camera: Camera? = null
 
+    private var root: View? = null
+
     private var isCapturing: Boolean = false
 
     private val displayListener = object : DisplayManager.DisplayListener {
@@ -52,15 +61,19 @@ class MainActivity : AppCompatActivity() {
 
         override fun onDisplayChanged(p0: Int) {
             if (this@MainActivity.displayId == displayId) {
-
+                if (::imageCapture.isInitialized && root != null) {
+                    imageCapture.targetRotation = root?.display?.rotation ?: ImageOutputConfig.INVALID_ROTATION
+                }
             }
         }
-
     }
+
+    private var uriList = mutableListOf<Uri>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        root = binding.root
         setContentView(binding.root)
         if (allPermissionsGranted()) {
             startCamera(binding.viewFinder)
@@ -112,7 +125,7 @@ class MainActivity : AppCompatActivity() {
                     this@MainActivity, cameraSelector, preview, imageCapture
                 )
                 preview.setSurfaceProvider(viewFinder.surfaceProvider)
-                bindCameraUseCase()
+                bindCaptureListener()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -131,10 +144,17 @@ class MainActivity : AppCompatActivity() {
     private fun updateSavedImageContent() {
         contentUri?.let {
             isCapturing = try {
-                val file = File()
+                val file = File(PathUtil.getPath(this, it) ?: throw FileNotFoundException())
+                MediaScannerConnection.scanFile(this, arrayOf(file.path), arrayOf("image/jpg"), null)
+                Handler(Looper.getMainLooper()).post {
+                    binding.previewImageView.loadCenterCrop(url = it.toString(), corner = 4f)
+                }
+                uriList.add(it)
                 false
             } catch (e: Exception) {
-                 false
+                e.printStackTrace()
+                Toast.makeText(this, "파일이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+                false
             }
         }
     }
@@ -155,7 +175,7 @@ class MainActivity : AppCompatActivity() {
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                 val savedUri = outputFileResults.savedUri ?: Uri.fromFile(photoFile)
                 contentUri = savedUri
-
+                updateSavedImageContent()
             }
 
             override fun onError(e: ImageCaptureException) {
