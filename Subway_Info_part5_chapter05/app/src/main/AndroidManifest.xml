@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Subway_Info_part5_chapter05"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        android:name=".SubwayApplication">
         <activity
             android:name=".MainActivity"
             android:exported="true">
