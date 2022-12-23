@@ -1,4 +1,4 @@
-package com.example.subway_info_part5_chapter05.presenter
+package com.example.subway_info_part5_chapter05.presentation
 
 interface BaseView<PresenterT: BasePresenter> {
 
