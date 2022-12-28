@@ -19,8 +19,8 @@ class StationStorageApi(
         val byteArray = sheetReference.getBytes(downloadSizeBytes).await()
 
         return byteArray.decodeToString()
-            .lines()
-            .drop(1)
+            .lines()    // 1002, 건대입구
+            .drop(1)    // header 영역 날리기 (맨 윗줄 - SUBWAY_ID, STATN_NM)
             .map { it.split(",") }
             .map { StationEntity(it[1]) to SubwayEntity(it[0].toInt()) }
     }
