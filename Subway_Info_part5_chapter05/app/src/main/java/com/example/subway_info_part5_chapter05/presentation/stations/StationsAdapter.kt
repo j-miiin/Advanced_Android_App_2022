@@ -6,8 +6,10 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.subway_info_part5_chapter05.databinding.ItemStationBinding
 import com.example.subway_info_part5_chapter05.domain.Station
+import com.example.subway_info_part5_chapter05.extensions.dip
+import com.example.subway_info_part5_chapter05.presentation.view.Badge
 
-class StationsAdapter : RecyclerView.Adapter<StationsAdapter.ViewHolder> {
+class StationsAdapter : RecyclerView.Adapter<StationsAdapter.ViewHolder>() {
 
     var data: List<Station> = emptyList()
 

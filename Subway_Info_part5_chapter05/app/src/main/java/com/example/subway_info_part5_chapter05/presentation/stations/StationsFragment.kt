@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemAnimator
 import com.example.subway_info_part5_chapter05.databinding.FragmentStationsBinding
 import com.example.subway_info_part5_chapter05.domain.Station
+import com.example.subway_info_part5_chapter05.extensions.toGone
+import com.example.subway_info_part5_chapter05.extensions.toVisible
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ScopeFragment
 
@@ -63,9 +66,9 @@ class StationsFragment : ScopeFragment(), StationsContract.View {
 
     private fun initViews() {
         binding?.recyclerView?.apply {
-            layoutmanager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             adapter = StationsAdapter()
-            ItemAnimator = DefaultItemAnimator()
+            itemAnimator = DefaultItemAnimator()
             addItemDecoration(DividerItemDecoration(context, RecyclerView.VERTICAL))
         }
     }
