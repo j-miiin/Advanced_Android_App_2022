@@ -21,6 +21,10 @@
         android:name="com.example.subway_info_part5_chapter05.presentation.stationarrivals.StationArrivalsFragment"
         tools:layout="@layout/fragment_station_arrivals">
 
+        <argument
+            android:name="station"
+            app:argType="com.example.subway_info_part5_chapter05.domain.Station"/>
+
     </fragment>
 
 </navigation>

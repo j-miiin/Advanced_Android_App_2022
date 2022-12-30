@@ -7,6 +7,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.subway_info_part5_chapter05.databinding.ActivityMainBinding
 import com.example.subway_info_part5_chapter05.extensions.toGone
 import com.example.subway_info_part5_chapter05.extensions.toVisible
+import com.example.subway_info_part5_chapter05.presentation.stationarrivals.StationArrivalsFragmentArgs
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,8 +34,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bindViews() {
-        navigationController.addOnDestinationChangedListener { _, destination, _ ->
+        navigationController.addOnDestinationChangedListener { _, destination, argument ->
             if (destination.id == R.id.station_arrivals_dest) {
+                title = StationArrivalsFragmentArgs.fromBundle(argument!!).station.name
                 binding.toolbar.toVisible()
             } else {
                 binding.toolbar.toGone()

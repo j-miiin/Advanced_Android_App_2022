@@ -11,30 +11,30 @@
         android:orientation="vertical">
 
         <EditText
+            android:id="@+id/searchEditText"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:id="@+id/searchEditText"
             android:background="@color/white"
             android:drawableStart="@drawable/ic_search"
             android:drawablePadding="6dp"
-            android:inputType="text"
             android:importantForAutofill="no"
+            android:inputType="text"
             android:paddingHorizontal="12dp"
-            tools:ignore="LabelFor"/>
+            tools:ignore="LabelFor" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/recyclerView"
-            tools:listitem="@layout/item_station"/>
+            tools:listitem="@layout/item_station" />
 
     </LinearLayout>
 
     <ProgressBar
+        android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/progressBar"
         android:layout_gravity="center"
-        tools:visibility="visible"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        tools:visibility="visible" />
 </FrameLayout>
