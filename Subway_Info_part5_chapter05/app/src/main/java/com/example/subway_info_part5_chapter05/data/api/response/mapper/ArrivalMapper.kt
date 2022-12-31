@@ -2,12 +2,14 @@ package com.example.subway_info_part5_chapter05.data.api.response.mapper
 
 import android.util.Log
 import com.example.subway_info_part5_chapter05.data.api.response.RealtimeArrival
+import com.example.subway_info_part5_chapter05.data.db.entity.StationEntity
 import com.example.subway_info_part5_chapter05.domain.ArrivalInformation
+import com.example.subway_info_part5_chapter05.domain.Station
 import com.example.subway_info_part5_chapter05.domain.Subway
 import java.text.SimpleDateFormat
 import java.util.*
 
-private val apiDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.'0'", Locale.KOREA)
+private val apiDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
 private val dataFormat = SimpleDateFormat("HH:mm:ss", Locale.KOREA)
 
 private const val INVALID_FIELD = "-"
@@ -34,3 +36,4 @@ fun RealtimeArrival.toArrivalInformation(): ArrivalInformation {
 
 fun List<RealtimeArrival>.toArrivalInformation(): List<ArrivalInformation> =
     map { it.toArrivalInformation() }
+

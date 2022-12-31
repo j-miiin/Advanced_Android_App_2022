@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.example.subway_info_part5_chapter05.data.db.entity.StationEntity
 import com.example.subway_info_part5_chapter05.data.db.entity.StationSubwayCrossRefEntity
 import com.example.subway_info_part5_chapter05.data.db.entity.StationWithSubwayEntity
@@ -40,4 +41,7 @@ interface StationDao {
             }
         )
     }
+
+    @Update
+    suspend fun updateStation(station: StationEntity)
 }

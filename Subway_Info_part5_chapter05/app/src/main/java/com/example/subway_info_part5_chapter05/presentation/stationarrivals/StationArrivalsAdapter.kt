@@ -22,10 +22,9 @@ class StationArrivalsAdapter : RecyclerView.Adapter<StationArrivalsAdapter.ViewH
     override fun getItemCount(): Int = data.size
 
     inner class ViewHolder(private val viewBinding: ItemArrivalBinding) : RecyclerView.ViewHolder(viewBinding.root) {
-        @SuppressLint("SetTextI18n")
         fun bind(arrival: ArrivalInformation) {
-            viewBinding.laelTextView.badgeColor = arrival.subway.color
-            viewBinding.laelTextView.text = "${arrival.subway.label} - ${arrival.direction}"
+            viewBinding.labelTextView.badgeColor = arrival.subway.color
+            viewBinding.labelTextView.text = "${arrival.subway.label} - ${arrival.direction}"
             viewBinding.destinationTextView.text = "🚩 ${arrival.destination}"
             viewBinding.arrivalMessageTextView.text = arrival.message
             viewBinding.arrivalMessageTextView.setTextColor(if (arrival.message.contains("당역")) Color.RED else Color.DKGRAY)
