@@ -12,7 +12,7 @@ class TrackingItemRepositoryImpl(
     private val dispatcher: CoroutineDispatcher
 ) : TrackingItemRepository {
 
-    override suspend fun getTrackingItemInformation(): List<Pair<TrackingItem, TrackingInformation>> {
+    override suspend fun getTrackingItemInformation(): List<Pair<TrackingItem, TrackingInformation>> =
         trackingItemDao.getAll()
             .mapNotNull { trackingItem ->
                 val relatedTrackingInfo = trackerApi.getTrackingInformation(
@@ -32,5 +32,5 @@ class TrackingItemRepositoryImpl(
                     { -(it.second.lastDetail?.time ?: Long.MAX_VALUE) }
                 )
             )
-    }
+
 }

@@ -5,11 +5,16 @@ import com.example.delivery_service_part5_chapter06.data.api.Url
 import com.example.delivery_service_part5_chapter06.data.db.AppDatabase
 import com.example.delivery_service_part5_chapter06.data.repository.TrackingItemRepository
 import com.example.delivery_service_part5_chapter06.data.repository.TrackingItemRepositoryImpl
+import com.example.delivery_service_part5_chapter06.data.repository.TrackingItemRepositoryStub
+import com.example.delivery_service_part5_chapter06.presentation.trackingitems.TrackingItemsContract
+import com.example.delivery_service_part5_chapter06.presentation.trackingitems.TrackingItemsFragment
+import com.example.delivery_service_part5_chapter06.presentation.trackingitems.TrackingItemsPresenter
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidApplication
+import org.koin.core.scope.get
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -47,5 +52,11 @@ val appModule = module {
     }
 
     // Repository
-    single<TrackingItemRepository> { TrackingItemRepositoryImpl(get(), get(), get()) }
+//    single<TrackingItemRepository> { TrackingItemRepositoryImpl(get(), get(), get()) }
+    single<TrackingItemRepository> { TrackingItemRepositoryStub() }
+
+    // Presentation
+    scope<TrackingItemsFragment> {
+        scoped<TrackingItemsContract.Presenter> { TrackingItemsPresenter(getSource()!!, get()) }
+    }
 }
