@@ -20,7 +20,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/updateAtTextView"
+                android:id="@+id/updatedAtTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -41,9 +41,9 @@
                 android:maxLines="1"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/updateAtTextView"
-                app:layout_constraintStart_toStartOf="@id/updateAtTextView"
-                app:layout_constraintTop_toBottomOf="@id/updateAtTextView"
+                app:layout_constraintEnd_toEndOf="@id/updatedAtTextView"
+                app:layout_constraintStart_toStartOf="@id/updatedAtTextView"
+                app:layout_constraintTop_toBottomOf="@id/updatedAtTextView"
                 tools:text="배송완료" />
 
             <TextView
@@ -57,7 +57,7 @@
                 android:maxLines="1"
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/updateAtTextView"
+                app:layout_constraintStart_toEndOf="@id/updatedAtTextView"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="638114586524" />
 

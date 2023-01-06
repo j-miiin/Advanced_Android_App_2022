@@ -46,7 +46,7 @@ class TrackingItemsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
 
         fun bind(company: ShippingCompany, information: TrackingInformation) {
-            binding.updateAtTextView.text =
+            binding.updatedAtTextView.text =
                 Date(information.lastDetail?.time ?: System.currentTimeMillis()).toReadableDateString()
 
             binding.levelLabelTextView.text = information.level?.label

@@ -3,9 +3,7 @@ package com.example.delivery_service_part5_chapter06.di
 import com.example.delivery_service_part5_chapter06.data.api.SweetTrackerApi
 import com.example.delivery_service_part5_chapter06.data.api.Url
 import com.example.delivery_service_part5_chapter06.data.db.AppDatabase
-import com.example.delivery_service_part5_chapter06.data.repository.TrackingItemRepository
-import com.example.delivery_service_part5_chapter06.data.repository.TrackingItemRepositoryImpl
-import com.example.delivery_service_part5_chapter06.data.repository.TrackingItemRepositoryStub
+import com.example.delivery_service_part5_chapter06.data.repository.*
 import com.example.delivery_service_part5_chapter06.presentation.trackingitems.TrackingItemsContract
 import com.example.delivery_service_part5_chapter06.presentation.trackingitems.TrackingItemsFragment
 import com.example.delivery_service_part5_chapter06.presentation.trackingitems.TrackingItemsPresenter
@@ -52,8 +50,9 @@ val appModule = module {
     }
 
     // Repository
-//    single<TrackingItemRepository> { TrackingItemRepositoryImpl(get(), get(), get()) }
-    single<TrackingItemRepository> { TrackingItemRepositoryStub() }
+    single<TrackingItemRepository> { TrackingItemRepositoryImpl(get(), get(), get()) }
+//    single<TrackingItemRepository> { TrackingItemRepositoryStub() }
+    single<ShippingCompanyRepository> { ShippingCompanyRepositoryImpl(get(), get(), get(), get()) }
 
     // Presentation
     scope<TrackingItemsFragment> {
