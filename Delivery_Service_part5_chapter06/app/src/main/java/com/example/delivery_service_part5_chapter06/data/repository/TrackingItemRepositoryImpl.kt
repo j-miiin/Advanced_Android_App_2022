@@ -5,6 +5,9 @@ import com.example.delivery_service_part5_chapter06.data.db.TrackingItemDao
 import com.example.delivery_service_part5_chapter06.data.entity.TrackingInformation
 import com.example.delivery_service_part5_chapter06.data.entity.TrackingItem
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.withContext
 
 class TrackingItemRepositoryImpl(
     private val trackerApi: SweetTrackerApi,
@@ -12,7 +15,10 @@ class TrackingItemRepositoryImpl(
     private val dispatcher: CoroutineDispatcher
 ) : TrackingItemRepository {
 
-    override suspend fun getTrackingItemInformation(): List<Pair<TrackingItem, TrackingInformation>> =
+    override val trackingItems: Flow<List<TrackingItem>> =
+        trackingItemDao.allTrackingItems().distinctUntilChanged()
+
+    override suspend fun getTrackingItemInformation(): List<Pair<TrackingItem, TrackingInformation>> = withContext(dispatcher) {
         trackingItemDao.getAll()
             .mapNotNull { trackingItem ->
                 val relatedTrackingInfo = trackerApi.getTrackingInformation(
@@ -32,5 +38,19 @@ class TrackingItemRepositoryImpl(
                     { -(it.second.lastDetail?.time ?: Long.MAX_VALUE) }
                 )
             )
+    }
+
+    override suspend fun saveTrackingItem(trackingItem: TrackingItem) = withContext(dispatcher) {
+        val trackingInformation = trackerApi.getTrackingInformation(
+            trackingItem.company.code,
+            trackingItem.invoice
+        ).body()
+
+        if (!trackingInformation!!.errorMessage.isNullOrBlank()) {
+            throw RuntimeException(trackingInformation.errorMessage)
+        }
+
+        trackingItemDao.insert(trackingItem)
+    }
 
 }

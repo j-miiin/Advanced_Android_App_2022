@@ -12,6 +12,14 @@ class TrackingItemsPresenter(
 
     override var trackingItemInformation: List<Pair<TrackingItem, TrackingInformation>> = emptyList()
 
+    init {
+        scope.launch {
+            trackingItemRepository
+                .trackingItems
+                .collect { refresh() }
+        }
+    }
+
     override fun onViewCreated() {
         fetchTrackingInformation()
     }
