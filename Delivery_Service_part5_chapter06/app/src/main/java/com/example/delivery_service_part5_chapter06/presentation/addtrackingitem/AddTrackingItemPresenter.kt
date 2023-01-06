@@ -1,5 +1,6 @@
 package com.example.delivery_service_part5_chapter06.presentation.addtrackingitem
 
+import android.util.Log
 import com.example.delivery_service_part5_chapter06.data.entity.ShippingCompany
 import com.example.delivery_service_part5_chapter06.data.entity.TrackingItem
 import com.example.delivery_service_part5_chapter06.data.repository.ShippingCompanyRepository
@@ -33,7 +34,10 @@ class AddTrackingItemPresenter(
                 shippingCompanies = shippingCompanyRepository.getShippingCompanies()
             }
 
-            shippingCompanies?.let { view.showCompanies(it) }
+            shippingCompanies?.let { view.showCompanies(it)
+            it.forEach { company ->
+                Log.d("company", company.name)
+            }}
             view.hideShippingCompaniesLoadingIndicator()
         }
     }
