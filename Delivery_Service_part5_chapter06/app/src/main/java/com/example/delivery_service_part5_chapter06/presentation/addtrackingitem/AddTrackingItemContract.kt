@@ -33,8 +33,6 @@ class AddTrackingItemContract {
         var shippingCompanies: List<ShippingCompany>?
         var selectedShippingCompany: ShippingCompany?
 
-        fun fetchShippingCompanies()
-
         fun changeSelectedShippingCompany(companyName: String)
 
         fun changeShippingInvoice(invoice: String)

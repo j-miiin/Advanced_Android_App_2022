@@ -1,14 +1,19 @@
 package com.example.delivery_service_part5_chapter06.presentation.trackingitems
 
+import android.util.Log
 import com.example.delivery_service_part5_chapter06.data.entity.TrackingInformation
 import com.example.delivery_service_part5_chapter06.data.entity.TrackingItem
 import com.example.delivery_service_part5_chapter06.data.repository.TrackingItemRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 class TrackingItemsPresenter(
     private val view: TrackingItemsContract.View,
     private val trackingItemRepository: TrackingItemRepository
 ) : TrackingItemsContract.Presenter {
+
+    override val scope: CoroutineScope = MainScope()
 
     override var trackingItemInformation: List<Pair<TrackingItem, TrackingInformation>> = emptyList()
 
