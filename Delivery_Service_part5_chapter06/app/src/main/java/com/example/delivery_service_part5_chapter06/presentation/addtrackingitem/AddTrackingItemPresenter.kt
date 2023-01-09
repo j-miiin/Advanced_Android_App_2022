@@ -27,18 +27,27 @@ class AddTrackingItemPresenter(
 
     override fun onDestroyView() { }
 
-    private fun fetchShippingCompanies() = scope.launch {
-        view.showShippingCompaniesLoadingIndicator()
-        if (shippingCompanies.isNullOrEmpty()) {
-            shippingCompanies = shippingCompanyRepository.getShippingCompanies()
+    override fun fetchShippingCompanies() {
+        scope.launch {
+            view.showShippingCompaniesLoadingIndicator()
+            if (shippingCompanies.isNullOrEmpty()) {
+                shippingCompanies = shippingCompanyRepository.getShippingCompanies()
+            }
+
+            shippingCompanies?.let { view.showCompanies(it)
+                it.forEach { company ->
+                    Log.d("company", company.name)
+                }}
+            view.hideShippingCompaniesLoadingIndicator()
         }
+    }
 
-        shippingCompanies?.let { view.showCompanies(it)
-        it.forEach { company ->
-            Log.d("company", company.name)
-        }}
-        view.hideShippingCompaniesLoadingIndicator()
-
+    override fun fetchRecommendShippingCompany() {
+        scope.launch {
+            view.showRecommendCompanyLoadingIndicator()
+            shippingCompanyRepository.getRecommendShippingCompany(invoice!!)?.let { view.showRecommendCompany(it) }
+            view.hideRecommendCompanyLoadingIndicator()
+        }
     }
 
     override fun changeSelectedShippingCompany(companyName: String) {

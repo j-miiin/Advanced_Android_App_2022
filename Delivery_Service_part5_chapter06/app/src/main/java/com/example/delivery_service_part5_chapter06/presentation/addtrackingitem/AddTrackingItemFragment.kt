@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.view.children
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.example.delivery_service_part5_chapter06.data.entity.ShippingCompany
@@ -118,6 +119,14 @@ class AddTrackingItemFragment : ScopeFragment(), AddTrackingItemContract.View {
         binding?.saveProgressBar?.toGone()
     }
 
+    override fun showRecommendCompanyLoadingIndicator() {
+        binding?.recommendProgressBar?.toVisible()
+    }
+
+    override fun hideRecommendCompanyLoadingIndicator() {
+        binding?.recommendProgressBar?.toGone()
+    }
+
     override fun showCompanies(companies: List<ShippingCompany>) {
         companies.forEach { company ->
             binding?.chipGroup?.addView(
@@ -126,6 +135,18 @@ class AddTrackingItemFragment : ScopeFragment(), AddTrackingItemContract.View {
                 }
             )
         }
+    }
+
+    override fun showRecommendCompany(company: ShippingCompany) {
+        binding?.chipGroup
+            ?.children
+            ?.filterIsInstance(Chip::class.java)
+            ?.forEach { chip ->
+                if (chip.text == company.name) {
+                    binding?.chipGroup?.apply { check(chip.id) }
+                    return@forEach
+                }
+            }
     }
 
     override fun enableSaveButton() {

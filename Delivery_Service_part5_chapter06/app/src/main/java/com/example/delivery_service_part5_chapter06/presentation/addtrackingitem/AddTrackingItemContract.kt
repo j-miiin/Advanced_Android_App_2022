@@ -16,7 +16,13 @@ class AddTrackingItemContract {
 
         fun hideSaveTrackingItemIndicator()
 
+        fun showRecommendCompanyLoadingIndicator()
+
+        fun hideRecommendCompanyLoadingIndicator()
+
         fun showCompanies(companies: List<ShippingCompany>)
+
+        fun showRecommendCompany(company: ShippingCompany)
 
         fun enableSaveButton()
 
@@ -32,6 +38,10 @@ class AddTrackingItemContract {
         var invoice: String?
         var shippingCompanies: List<ShippingCompany>?
         var selectedShippingCompany: ShippingCompany?
+
+        fun fetchShippingCompanies()
+
+        fun fetchRecommendShippingCompany()
 
         fun changeSelectedShippingCompany(companyName: String)
 
