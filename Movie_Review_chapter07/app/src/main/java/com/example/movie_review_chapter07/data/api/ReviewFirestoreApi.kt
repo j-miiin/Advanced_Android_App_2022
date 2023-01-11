@@ -20,4 +20,11 @@ class ReviewFirestoreApi(
             .map { it.toObject<Review>() }
             .firstOrNull()  // limit(1)이어도 list가 반환되므로
 
+    override suspend fun getAllReviews(movieId: String): List<Review> =
+        firestore.collection("reviews")
+            .whereEqualTo("movieId", movieId)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .get()
+            .await()
+            .map { it.toObject<Review>() }
 }

@@ -3,6 +3,7 @@ package com.example.movie_review_chapter07.presentation.home
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -123,7 +124,7 @@ class HomeAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
              */
 
             item.latestReview?.let { review ->
-                binding.latestReviewTextView.text =
+                binding.latestReviewLabelTextView.text =
                     if (review.userId.isNullOrBlank()) {
                         "✨ 따끈따끈한 후기"
                     } else {
