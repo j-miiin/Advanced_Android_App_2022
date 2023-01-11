@@ -9,6 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_review_chapter07.databinding.FragmentHomeBinding
 import com.example.movie_review_chapter07.domain.model.FeaturedMovie
 import com.example.movie_review_chapter07.domain.model.Movie
+import com.example.movie_review_chapter07.extension.dip
+import com.example.movie_review_chapter07.extension.toGone
+import com.example.movie_review_chapter07.extension.toVisible
+import com.example.movie_review_chapter07.presentation.home.HomeAdapter.Companion.ITEM_VIEW_TYPE_FEATURED
+import com.example.movie_review_chapter07.presentation.home.HomeAdapter.Companion.ITEM_VIEW_TYPE_SECTION_HEADER
 import org.koin.android.ext.android.inject
 import org.koin.androidx.scope.ScopeFragment
 
@@ -72,7 +77,7 @@ class HomeFragment : ScopeFragment(), HomeContract.View {
     private fun RecyclerView.createGridLayoutManager(): GridLayoutManager =
         GridLayoutManager(context, 3, RecyclerView.VERTICAL, false).apply {
             spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
+                override fun getSpanSize(position: Int): Int =
                     when(adapter?.getItemViewType(position)) {
                         // header와 추천 영화는 3칸씩 사용
                         ITEM_VIEW_TYPE_SECTION_HEADER,
@@ -83,7 +88,6 @@ class HomeFragment : ScopeFragment(), HomeContract.View {
                             1
                         }
                     }
-                }
             }
         }
 

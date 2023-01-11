@@ -5,7 +5,6 @@ import com.example.movie_review_chapter07.di.appModule
 import com.example.movie_review_chapter07.di.dataModule
 import com.example.movie_review_chapter07.di.domainModule
 import com.example.movie_review_chapter07.di.presenterModule
-import com.example.movie_review_chapter07.utility.MovieDataGenerator
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
