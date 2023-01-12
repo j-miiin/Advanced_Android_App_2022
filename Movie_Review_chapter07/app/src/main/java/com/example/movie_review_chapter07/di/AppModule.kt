@@ -13,6 +13,9 @@ import com.example.movie_review_chapter07.domain.usecase.GetRandomFeaturedMovieU
 import com.example.movie_review_chapter07.presentation.home.HomeContract
 import com.example.movie_review_chapter07.presentation.home.HomeFragment
 import com.example.movie_review_chapter07.presentation.home.HomePresenter
+import com.example.movie_review_chapter07.presentation.mypage.MyPageContract
+import com.example.movie_review_chapter07.presentation.mypage.MyPageFragment
+import com.example.movie_review_chapter07.presentation.mypage.MyPagePresenter
 import com.example.movie_review_chapter07.presentation.reviews.MovieReviewsFragment
 import com.example.movie_review_chapter07.presentation.reviews.MovieReviewsContract
 import com.example.movie_review_chapter07.presentation.reviews.MovieReviewsPresenter
@@ -55,5 +58,9 @@ val presenterModule = module {
 
     scope<MovieReviewsFragment> {
         scoped<MovieReviewsContract.Presenter> { (movie: Movie) -> MovieReviewsPresenter(getSource()!!, movie, get())}
+    }
+
+    scope<MyPageFragment> {
+        scoped<MyPageContract.Presenter> { MyPagePresenter(get(), get()) }
     }
 }
