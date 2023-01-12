@@ -13,7 +13,7 @@
 
         <action
             android:id="@+id/to_movie_reviews_action"
-            app:destination="@+id/movie_reviews_dest"/>
+            app:destination="@id/movie_reviews_dest"/>
 
     </fragment>
 
@@ -25,7 +25,7 @@
 
         <action
             android:id="@+id/to_movie_reviews_action"
-            app:destination="@+id/movie_reviews_dest"/>
+            app:destination="@id/movie_reviews_dest"/>
 
     </fragment>
 
