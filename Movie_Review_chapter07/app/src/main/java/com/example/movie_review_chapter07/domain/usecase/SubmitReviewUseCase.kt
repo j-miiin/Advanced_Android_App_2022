@@ -16,7 +16,7 @@ class SubmitReviewUseCase(
         content: String,
         score: Float
     ) : Review {
-        val user = userRepository.getUser()
+        var user = userRepository.getUser()
 
         if (user == null) {
             userRepository.saveUser(User())
@@ -25,7 +25,10 @@ class SubmitReviewUseCase(
 
         return reviewRepository.addReview(
             Review(
-                
+                userId = user!!.id,
+                movieId = movie.id,
+                content = content,
+                score = score
             )
         )
     }
