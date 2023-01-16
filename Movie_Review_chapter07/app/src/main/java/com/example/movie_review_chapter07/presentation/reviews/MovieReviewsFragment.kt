@@ -1,14 +1,19 @@
 package com.example.movie_review_chapter07.presentation.reviews
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_review_chapter07.databinding.FragmentMovieReviewsBinding
 import com.example.movie_review_chapter07.domain.model.Movie
+import com.example.movie_review_chapter07.domain.model.MovieReviews
 import com.example.movie_review_chapter07.domain.model.Review
 import com.example.movie_review_chapter07.extension.toGone
 import com.example.movie_review_chapter07.extension.toVisible
@@ -69,15 +74,43 @@ class MovieReviewsFragment : ScopeFragment(), MovieReviewsContract.View {
     }
 
     override fun showMovieInformation(movie: Movie) {
-        binding?.recyclerView?.adapter = MovieReviewsAdapter(movie)
+        binding?.recyclerView?.adapter = MovieReviewsAdapter(movie).apply {
+            onReviewSubmitButtonClickListener = { content, score ->
+                presenter.requestAddReview(content, score)
+                hideKeyboard()
+            }
+            onReviewDeleteButtonClickListener = { review ->
+                showDeleteConfirmDialog(review)
+            }
+        }
     }
 
-    override fun showReviews(reviews: List<Review>) {
+    private fun hideKeyboard() {
+        val inputMethodManager = context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(activity?.currentFocus?.windowToken, 0)
+    }
+
+    private fun showDeleteConfirmDialog(review: Review) {
+        AlertDialog.Builder(requireContext())
+            .setMessage("정말로 리뷰를 삭제하시겠어요?")
+            .setPositiveButton("삭제할래요") { _, _ ->
+                presenter.requestRemoveReview(review)
+            }
+            .setNegativeButton("안할래요") { _, _ -> }
+            .show()
+    }
+
+    override fun showReviews(reviews: MovieReviews) {
         binding?.recyclerView?.toVisible()
         binding?.errorDescriptionTextView?.toGone()
         (binding?.recyclerView?.adapter as? MovieReviewsAdapter)?.apply {
-            this.reviews = reviews
+            this.myReview = reviews.myReview
+            this.reviews = reviews.othersReview
             notifyDataSetChanged()
         }
+    }
+
+    override fun showErrorToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }

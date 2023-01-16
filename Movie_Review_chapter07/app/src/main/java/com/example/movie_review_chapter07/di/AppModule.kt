@@ -6,10 +6,7 @@ import com.example.movie_review_chapter07.data.preference.PreferenceManager
 import com.example.movie_review_chapter07.data.preference.SharedPreferenceManager
 import com.example.movie_review_chapter07.data.repository.*
 import com.example.movie_review_chapter07.domain.model.Movie
-import com.example.movie_review_chapter07.domain.usecase.GetAllMoviesUseCase
-import com.example.movie_review_chapter07.domain.usecase.GetAllReviewsUseCase
-import com.example.movie_review_chapter07.domain.usecase.GetMyReviewedMoviesUseCase
-import com.example.movie_review_chapter07.domain.usecase.GetRandomFeaturedMovieUseCase
+import com.example.movie_review_chapter07.domain.usecase.*
 import com.example.movie_review_chapter07.presentation.home.HomeContract
 import com.example.movie_review_chapter07.presentation.home.HomeFragment
 import com.example.movie_review_chapter07.presentation.home.HomePresenter
@@ -47,8 +44,10 @@ val dataModule = module {
 val domainModule = module {
     factory { GetRandomFeaturedMovieUseCase(get(), get()) }
     factory { GetAllMoviesUseCase(get()) }
-    factory { GetAllReviewsUseCase(get()) }
+    factory { GetAllMovieReviewsUseCase(get(), get()) }
     factory { GetMyReviewedMoviesUseCase(get(), get(), get()) }
+    factory { SubmitReviewUseCase(get(), get()) }
+    factory { DeleteReviewUseCase(get()) }
 }
 
 val presenterModule = module {
@@ -57,7 +56,8 @@ val presenterModule = module {
     }
 
     scope<MovieReviewsFragment> {
-        scoped<MovieReviewsContract.Presenter> { (movie: Movie) -> MovieReviewsPresenter(getSource()!!, movie, get())}
+        scoped<MovieReviewsContract.Presenter> { (movie: Movie) ->
+            MovieReviewsPresenter(getSource()!!, movie, get(), get(), get())}
     }
 
     scope<MyPageFragment> {
